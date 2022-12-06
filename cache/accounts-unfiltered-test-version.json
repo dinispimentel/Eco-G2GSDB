@@ -1,0 +1,57 @@
+{
+   "shadowverse-account":{
+      "service_id":"lgc_service_5",
+      "brand_id":"lgc_game_25370",
+      "marketing_title":{
+         "en":"Shadowverse",
+         "id":"Shadowverse",
+         "zh-CN":"Shadowverse",
+         "zh-TW":"Shadowverse"
+      },
+      "cat_path":"ae413d59-f05c-4aa1-ae24-11a82a5decbd"
+   },
+   "warhammer-vermintide-2-account":{
+      "service_id":"lgc_service_5",
+      "brand_id":"lgc_game_27969",
+      "marketing_title":{
+         "en":"Warhammer: Vermintide 2",
+         "id":"Warhammer: Vermintide 2",
+         "zh-CN":"Warhammer: Vermintide 2",
+         "zh-TW":"Warhammer: Vermintide 2"
+      },
+      "cat_path":"ae413d59-f05c-4aa1-ae24-11a82a5decbd"
+   },
+   "mobile-arena-account":{
+      "service_id":"lgc_service_5",
+      "brand_id":"lgc_game_24315",
+      "marketing_title":{
+         "en":"Mobile Arena",
+         "id":"Mobile Arena",
+         "zh-CN":"Mobile Arena",
+         "zh-TW":"Mobile Arena"
+      },
+      "cat_path":"ae413d59-f05c-4aa1-ae24-11a82a5decbd"
+   },
+   "pirates-of-the-caribbean-tow-account":{
+      "service_id":"lgc_service_5",
+      "brand_id":"lgc_game_24792",
+      "marketing_title":{
+         "en":"Pirates Of The Caribbean : ToW",
+         "id":"Pirates Of The Caribbean : ToW",
+         "zh-CN":"Pirates Of The Caribbean : ToW",
+         "zh-TW":"Pirates Of The Caribbean : ToW"
+      },
+      "cat_path":"ae413d59-f05c-4aa1-ae24-11a82a5decbd"
+   },
+   "marvel-future-fight-account": {
+      "service_id": "lgc_service_5",
+      "brand_id": "lgc_game_24093",
+      "marketing_title": {
+         "en": "MARVEL Future Fight",
+         "id": "MARVEL Future Fight",
+         "zh-CN": "MARVEL Future Fight",
+         "zh-TW": "MARVEL Future Fight"
+      },
+      "cat_path": "ae413d59-f05c-4aa1-ae24-11a82a5decbd"
+   }
+}

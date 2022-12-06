@@ -1,0 +1,20 @@
+{
+    "title_keywords_whitelist": [["account",5],["skins",4], ["fresh",5], ["new",7],["fast delivery",6],["og",9],["steam",5], ["instant",5]
+],
+    "title_keywords_blacklist": [["pack",8], ["bundle",2], ["XBOX",30],["ps5",30],["ps4",30],["ps3",30],["ps",7],["nintendo",30]
+    ,["xbox series",30], ["GAME PASS",5]
+],
+    "description_keywords_whitelist": [["account", 7], ["fresh",5], ["fast delivery",7], ["game",5],
+     ["Original email", 10], ["COMPLETE COLLECTION", 8], ["change", 2], ["profile", 5],["LV",6],["LVL",6],["lvl30",7],
+    ["euw", 2],["playable", 10]
+
+],
+    "description_keywords_blacklist": [["pack",8],["bundle",5],["xbox",20],["game pass",25], ["item only",50],["not included",7],
+    ["items only",50],["item",3],["redeem",7]
+],
+    "extreme_whitelist": ["Email unverified","Unverfied email","Smurf","full access","access full","prime",
+    "old account","account old","new account","account new","banned","vac","vac banned","unranked",
+    "Steam Account","Ranked Ready","turkey account"
+],
+    "extreme_blacklist": ["GAME NOT INCLUDED","No steam account","Steam Account not included","account not included","no account"]
+  }
