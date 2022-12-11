@@ -10,7 +10,7 @@ from src.RedisCache import RedisCache
 from src.dispatcher import Dispatcher
 import json
 import threading
-from src.G2G.G2GOfferBook import OfferBook
+from src.G2G.G2GOfferBook import OfferBook, Exceptions
 from src.G2G.G2GOffer import Offer
 from src.G2G.G2GFilterOffer import FilterOffer
 from src.config import Config
@@ -116,12 +116,14 @@ class G2GScraper:
 
         with open(os.path.join(os.path.dirname(os.path.dirname(__file__)),"cache/" + file), "r") as file:
             accs_un = json.loads(file.read())
+
         k_accs_un = list(accs_un.keys())
 
         accs_offers = {}
 
         for k in range(0, len(k_accs_un) - 1):
             if "marketing_title" in accs_un[k_accs_un[k]]:
+
                 accs_offers[str(accs_un[k_accs_un[k]]["marketing_title"]["zh-CN"])] = \
                     {
                         "path": str(k_accs_un[k]),
@@ -161,6 +163,7 @@ class G2GScraper:
         print(str(num) + " Ofertas nao tinham algum parametro.")
         ob = OfferBook(goodOffers, sortType=-1, sortDir=-1)
         ob.updateOfferChanges("G2G", "Main acquire.", len(goodOffers))
+        ob.addFlag(ob.Flags.G2G_BRANDED)
         return ob
 
     @staticmethod
@@ -195,17 +198,26 @@ class G2GScraper:
             return {}
 
     @staticmethod
-    def setOfferBookLowestPrice(offerbook: OfferBook, maxQuerySize) -> None:
+    def retrieveLowestPrices(offerbook: OfferBook, maxQuerySize, currency=None) -> None:
+
+        cf, fnf = offerbook.containsFlags([OfferBook.Flags.G2G_BRANDED])
+        if not cf:
+            raise Exceptions.OfferBookMissingFlag(f'Flags missing:'
+                                                  f'{OfferBook.Flags.convertFlagNumbersToStrs(fnf)}')
+
         thread_pool = []
         init_len = len(offerbook.offers)
         valid_offers = {}
         INSTANCES = Config.G2G.Offering.INSTANCES
 
         def _dispatchGetAndFilter(brand):
-            r = Dispatcher.G2G_getLowestPrices(brand, maxQuerySize)
+            r = Dispatcher.G2G_getLowestPrices(brand, maxQuerySize, currency=currency)
             try:
                 if int(r["code"]) == 2000:
-                    valid_offers.update(G2GScraper.__G2G_filterPrices(r["payload"]["results"]))
+                    f_p = G2GScraper.__G2G_filterPrices(r["payload"]["results"])
+                    if len(list(f_p.keys())) > 0:
+                        f_p.update({list(f_p.keys())[0]: (list(f_p.values())[0], r["payload"]["results"][0]["display_currency"])})
+                        valid_offers.update(f_p)
                 else:
                     return
             except KeyError as ke:
@@ -225,7 +237,7 @@ class G2GScraper:
 
         for vOfferBrand in valid_offers.keys():
             i = offerbook.getOfferIdxByBrandId(vOfferBrand)
-            offerbook.offers[i].setG2GPrice(Price(valid_offers[vOfferBrand], BASE))
+            offerbook.offers[i].setG2GPrice(Price(valid_offers[vOfferBrand][0], valid_offers[vOfferBrand][1]))
         offerbook.updateOfferChanges("G2G", "Remove offers without recognizable G2GPrice/weirdo pack.",
                                      -1 * (init_len-len(valid_offers)))
         offerbook.addFlag(OfferBook.Flags.G2G_PRICED)
