@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 from src.G2G.G2GOffer import Offer
 from typing import List, Tuple
@@ -12,7 +13,7 @@ from typing import List, Tuple
 class NumOff:
 
     def __init__(self, rem):
-        self.rem = 0
+        self.rem = rem
 
     def increment(self):
         self.rem += 1
@@ -51,7 +52,7 @@ class SORTING:
             def priceGapPercentage(e: Offer):
                 lsp = e.getLowestSteamPrices()
                 if lsp and e.g2gprice.value:
-                    return ((lsp - e.g2gprice.value) / lsp) * 100
+                    return ((e.g2gprice.value - lsp) / e.g2gprice.value) * 100
                 else:
                     return 2**32
 
@@ -69,6 +70,20 @@ class SORTING:
             except TypeError as te:
                 return "unsorted"
 
+    @staticmethod
+    def createConvDict():
+        method_list = [func for func in dir(SORTING.OPTIONS.FUNCS) if callable(getattr(SORTING.OPTIONS.FUNCS, func))
+                       and not func.startswith("__")]
+        goodDict = {}
+
+        for func in method_list:
+            goodDict.update({func: getattr(SORTING.OPTIONS.FUNCS, func)})
+
+        return goodDict
+
+    @staticmethod
+    def convertNameToFunc(name: str):
+        return SORTING.createConvDict()[name]
 
     class DIRECTION:
         ASCENDANT = 0
@@ -83,12 +98,16 @@ class Exceptions:
 
 class OfferBook:
     class Flags:
+        G2G_BRANDED = -1
+
         G2G_PRICED = 0
         G2G_PRICE_SANITIZED = 1
+
         STEAM_APPIDED = 2
-        STEAM_APPID_SANITEZED = 3
-        STEAM_PRICE_SANITIZED = 4
-        STEAM_PRICED = 5
+        STEAM_APPID_SANITIZED = 3
+
+        STEAM_PRICED = 4
+        STEAM_PRICE_SANITIZED = 5
 
 
         @staticmethod
@@ -200,6 +219,16 @@ class OfferBook:
 
         return json.dumps(d)
 
+    def toDICT(self) -> dict:
+        d = dict()
+        d["klass"] = OfferBook.KLASS
+        d["offers"] = Offer.dictifyList(self.offers)
+        d["sortType"] = SORTING.OPTIONS.FUNC_TO_NAME(self.sortType)
+        d["sortDir"] = self.sortDir
+        d["offerChanges"] = self.offer_changes
+        d["flags"] = self.flags
+        return d
+
     @staticmethod
     def rebuild(j):
 
@@ -228,7 +257,7 @@ class OfferBook:
         init_len = len(self.offers)
         filtered_offers = []
         for offer in self.offers:
-            if not offer.count < x:
+            if offer.count > x:
                 filtered_offers.append(offer)
 
         self.offers = filtered_offers
@@ -296,7 +325,7 @@ class OfferBook:
 
         self.__removeOffersWithoutAppID(nf.increment)
         self.updateOfferChanges("Steam", "Remove offers without AppID.", -1 * nf.get())
-        self.addFlag(OfferBook.Flags.STEAM_APPID_SANITEZED)
+        self.addFlag(OfferBook.Flags.STEAM_APPID_SANITIZED)
 
     def __removeOffersWithoutAnySteamPrice(self, incrementFunc):
         for offer_idx in range(0, len(self.offers)):
@@ -351,3 +380,14 @@ class OfferBook:
             x = len(self.offers) -1
         for i in range(0, x+1):
             self.offers[i].print()
+
+    def getSubsetOfferBook(self, offer_limit: int, offset=0) -> OfferBook:
+        try:
+            if offer_limit < 1:
+                raise ArithmeticError("Limit must be greater than 1")
+
+            this_ob = copy.deepcopy(self.__dict__)
+            this_ob.update({'offers': self.offers[offset:offer_limit + offset]})
+            return OfferBook(**this_ob)
+        except (IndexError, Exception):
+            return self
