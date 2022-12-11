@@ -14,7 +14,7 @@ ob = OfferBook.loadFromFile(Config.OfferBooking.FILES.getPriced(testing=True))
 
 ob.print()
 
-SteamDBScraper.setOfferBookAppIDs(ob)
+SteamDBScraper.retrieveAppIDs(ob)
 
 with open("../src/cache/offer-book-priced-appided.json", "w") as f:
     f.write(ob.toJSON())
