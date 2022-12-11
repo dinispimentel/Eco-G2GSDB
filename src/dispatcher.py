@@ -110,14 +110,14 @@ class Dispatcher:
 
 
     @staticmethod
-    def G2G_getLowestPrices(brand, maxQuerySize):
+    def G2G_getLowestPrices(brand, maxQuerySize, currency=None):
 
         params = {
             'service_id': Config.G2G.SERVICE_ID,
             'brand_id': brand,
             'sort': 'lowest_price',
             'page_size': maxQuerySize,
-            'currency': Config.G2G.Pricing.CURRENCY,
+            'currency': currency or Config.G2G.Pricing.CURRENCY,
             'country': Config.G2G.Pricing.COUNTRY
         }
 
