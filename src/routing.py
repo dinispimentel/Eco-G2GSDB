@@ -129,7 +129,7 @@ class Router:
         sc.update({"msg": sc["msg"] + " " + (str(content) if content else "")})
         self.write_response(json.dumps(sc))
 
-    def DMDataLocked(self, extra=""):
+    def G2GDataLocked(self, extra=""):
         er = copy.deepcopy(ERRORS['data_locked'])
         er.update({"msg": er["msg"] + f'\n{extra}'})
         self.write_response(json.dumps(er), code=400)
