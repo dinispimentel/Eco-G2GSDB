@@ -6,6 +6,7 @@ from ecolib.price import Price
 from ecolib.threader import Threader
 from ecolib.logger import lg as logging
 
+from src.RedisCache import RedisCache
 from src.dispatcher import Dispatcher
 import json
 import threading
@@ -127,6 +128,16 @@ class G2GScraper:
                         "brand": str(accs_un[k_accs_un[k]]["brand_id"])
                     }
         allBrands = []
+
+        titles_to_check_black_list = []
+        for acc_offer_title in list(accs_offers.keys()):
+            titles_to_check_black_list.append(acc_offer_title)
+        black_list = RedisCache.areBlackList(titles_to_check_black_list)
+
+        for t, bl in black_list.items():
+            if bl:
+                accs_offers.pop(t)
+                print("Popping Blacklist: " + str(t))
 
         for kao in list(accs_offers.keys()):
             allBrands.append(accs_offers[kao]["brand"])

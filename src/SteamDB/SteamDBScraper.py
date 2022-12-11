@@ -5,6 +5,7 @@ from difflib import SequenceMatcher
 from threading import Thread
 
 from src.G2G.G2GOfferBook import OfferBook, Exceptions
+from src.RedisCache import RedisCache
 from src.config import Config
 from src.dispatcher import Dispatcher
 
@@ -149,12 +150,32 @@ class SteamDBScraper:
             else:
                 offer_idx = offerbook.getOfferIdxByTitle(title)
                 offerbook.offers[offer_idx].setAppID(appID)
+                tosave_appid_redis(title, appID)
+
+        titles = []
 
         for offer in offerbook.offers:
-            thread_pool.append(Thread(target=__dispatchAppIDs, args=(offer.title,)))
+            titles.append(offer.title)
+        appIds = RedisCache.getAppIDs(titles)
+        titles_to_scrap = []
+
+        for i in range(len(titles)):
+            if appIds[i] is not None:
+                offer_idx = offerbook.getOfferIdxByTitle(titles[i])
+                offerbook.offers[offer_idx].setAppID(appIds[i].decode("utf-8"))
+            else:
+                titles_to_scrap.append(titles[i])
+
+        toSave = {}
+        def annotate_to_save(title: str, appId: int):
+            toSave.update({title: appId})
+
+        for title_to_scrap in titles_to_scrap:
+            thread_pool.append(Thread(target=__dispatchAppIDs, args=(title_to_scrap, annotate_to_save)))
 
         T = Threader(lambda: thread_pool, Config.SteamDB.AppIDing.INSTANCES)
-        T.dispatch(lambda s, e: print(f'Dispatched AppIDing: [{s}->{e} <{len(offerbook.offers)}>]'))
+        T.dispatch(endFunc=lambda s, e: print(f'Dispatched AppIDing: [{s}->{e} <{len(offerbook.offers)}>]'))
+        RedisCache.saveAppIDs(toSave)
         offerbook.addFlag(OfferBook.Flags.STEAM_APPIDED)
 
 
