@@ -141,10 +141,10 @@ class SteamDBScraper:
         return prices
 
     @staticmethod
-    def setOfferBookAppIDs(offerbook: OfferBook) -> None:
+    def retrieveAppIDs(offerbook: OfferBook) -> None:
         thread_pool = []
 
-        def __dispatchAppIDs(title: str):
+        def __dispatchAppIDs(title: str, tosave_appid_redis: Callable[[str, int], None]):
             appID = SteamDBScraper.searchForTitle(title)
             if not appID:
                 logging.warning("Não foi encontrado o AppID de: " + title)
@@ -181,9 +181,9 @@ class SteamDBScraper:
 
 
     @staticmethod
-    def setOfferBookSteamPrices(offerbook: OfferBook, base: str) -> None:
-        mf, fnf = offerbook.containsFlags([OfferBook.Flags.STEAM_APPIDED, OfferBook.Flags.STEAM_APPID_SANITEZED])
-        if not mf:
+    def retrieveSteamPrices(offerbook: OfferBook, base: str) -> None:
+        cf, fnf = offerbook.containsFlags([OfferBook.Flags.STEAM_APPIDED, OfferBook.Flags.STEAM_APPID_SANITIZED])
+        if not cf:
             raise Exceptions.OfferBookMissingFlag(f'Need to sanitize the Steam AppIDs\n Flags missing:'
                                                   f'{OfferBook.Flags.convertFlagNumbersToStrs(fnf)}')
 
