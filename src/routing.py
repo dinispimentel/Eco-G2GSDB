@@ -5,25 +5,29 @@ from typing import List, Tuple, Type
 from ecolib.serverutils import ServerUtils
 from ecolib.utils import Utils
 
-from DPHTTPRequestHandler import DPHTTPRequestHandler
+from .DPHTTPRequestHandler import DPHTTPRequestHandler
 
 
-# from .DPHTTPRequestHandler import DPHTTPRequestHandler, ERRORS, SUCCESSES
+from .DPHTTPRequestHandler import DPHTTPRequestHandler, ERRORS, SUCCESSES
+from .G2G.G2GOfferBook import OfferBook
+
+
 # from .Models.DMOfferBook import OfferBook
 
 
 class Router:
     GetRoutes = {
         "STATUS": "/status",
-        "LATEST_UPDATE_DMARKET_DATA_WHEN": "/lastUpdateDMarketData",
+        "LATEST_UPDATE_G2G_DATA_WHEN": "/lastUpdateG2GData",
         "RETRIEVE_BEST_DEALS": "/bestdeals"
     }
 
     PostRoutes = {
-        "INSPECT_SKIN": "/scrapSkin",
-        "UPDATE_INTERNAL_DMARKET": "/updateInternalDMarketData",
-        "ITEM_NAME_ID": "/itemNameId",
-        "ITEM_PRICE": "/itemPrice"
+        "CHECK_G2G_NEW_BRANDS" : "/check-new-brands",
+        "BRAND": "/brand-it",
+        "PRICE": "/g2g-price-it",
+        "STEAM_APP_ID": "/steam-app-id-it",
+        "STEAM_PRICE": "/steam-price-it"
     }
 
     PatchRoutes = {
@@ -54,9 +58,9 @@ class Router:
         if path == self.GetRoutes["STATUS"]:
             from .Controllers.status import Status
             Status.GET(self)
-        elif path == self.GetRoutes["LATEST_UPDATE_DMARKET_DATA_WHEN"]:
-            from .Controllers.latestdmarketdata import LatestDMarketData
-            LatestDMarketData.GET(self)
+        # elif path == self.GetRoutes["LATEST_UPDATE_DMARKET_DATA_WHEN"]:
+        #     from .Controllers.latestdmarketdata import LatestDMarketData
+        #     LatestDMarketData.GET(self)
         elif path == self.GetRoutes["RETRIEVE_BEST_DEALS"]:
             from .Controllers.retrievebestdeals import RetrieveBestDeals
             # JBODY: {sort_type: int, sort_direction: int, offer_limit: int}
@@ -73,27 +77,31 @@ class Router:
         if content_len > 0:
             jbody = json.loads(self.RH.rfile.read(content_len))
 
-        if path == self.PostRoutes["INSPECT_SKIN"]:
-            pass
-        elif path == self.PostRoutes["UPDATE_INTERNAL_DMARKET"]:
-            from .Controllers.updateinternaldmarket import UpdateInternalDMarket
-            UpdateInternalDMarket.POST(self, jbody=jbody)
-        elif path == self.PostRoutes["ITEM_NAME_ID"]:
-            from .Controllers.itemnaming import ItemNaming
-            ItemNaming.POST(self, jbody=jbody)
-        elif path == self.PostRoutes["ITEM_PRICE"]:
-            from .Controllers.itempricing import ItemPricing
-            ItemPricing.POST(self, jbody=jbody)
+        if path == self.PostRoutes["CHECK_G2G_NEW_BRANDS"]:
+            from .Controllers.updateaccountcache import UpdateAccountCache
+            UpdateAccountCache.POST(self, jbody={})
+        elif path == self.PostRoutes["BRAND"]:
+            from .Controllers.branding import Branding
+            Branding.POST(self, jbody=jbody)
+        elif path == self.PostRoutes["PRICE"]:
+            from .Controllers.pricing import Pricing
+            Pricing.POST(self, jbody=jbody)
+        elif path == self.PostRoutes["STEAM_APP_ID"]:
+            from .Controllers.appiding import AppIDing
+            AppIDing.POST(self, jbody={})
+        elif path == self.PostRoutes["STEAM_PRICE"]:
+            from .Controllers.steampricing import SteamPricing
+            SteamPricing.POST(self, jbody=jbody)
 
-    def PATCH(self):
-        path = self.RH.path
-        content_len = self.__dealWithContentLength()
-        jbody = None
-        if content_len > 0:
-            jbody = json.loads(self.RH.rfile.read(content_len))
-        if path == self.PatchRoutes["CONVERT_CURRENCY"]:
-            from .Controllers.convertcurrency import ConvertCurrency
-            ConvertCurrency.PATCH(self, jbody=jbody)
+    # def PATCH(self):
+    #     path = self.RH.path
+    #     content_len = self.__dealWithContentLength()
+    #     jbody = None
+    #     if content_len > 0:
+    #         jbody = json.loads(self.RH.rfile.read(content_len))
+    #     if path == self.PatchRoutes["CONVERT_CURRENCY"]:
+    #         from .Controllers.convertcurrency import ConvertCurrency
+    #         ConvertCurrency.PATCH(self, jbody=jbody)
 
     def missingParams(self, missingParams: list):
         er = copy.deepcopy(ERRORS["null_json"])
