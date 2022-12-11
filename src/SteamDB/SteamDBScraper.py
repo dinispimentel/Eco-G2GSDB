@@ -207,5 +207,5 @@ class SteamDBScraper:
         T = Threader(lambda: thread_pool, Config.SteamDB.AppPricing.INSTANCES,
                      delay_config=Config.SteamDB.AppPricing.DELAY_CONFIG)
 
-        T.dispatch(lambda s, e: print(f'Dispatched AppIDPricing: [{s}->{e} <{len(querying_app_ids)}>]'))
+        T.dispatch(endFunc=lambda s, e: print(f'Dispatched AppIDPricing: [{s}->{e} <{len(querying_app_ids)}>]'))
         offerbook.addFlag(OfferBook.Flags.STEAM_PRICED)

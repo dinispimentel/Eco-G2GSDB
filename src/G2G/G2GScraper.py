@@ -71,7 +71,7 @@ class G2GScraper:
 
 
         T = Threader(lambda: thread_pool, INSTANCES)
-        T.dispatch(lambda s, e: print("Dispatched Branding Threads: [" + str(s) + "->" + str(e) + " <" +
+        T.dispatch(endFunc=lambda s, e: print("Dispatched Branding Threads: [" + str(s) + "->" + str(e) + " <" +
                                       str(len(thread_pool)) + ">]"))
 
         try:
@@ -219,7 +219,7 @@ class G2GScraper:
         tc = 0
         t = Threader(lambda: thread_pool, INSTANCES)
 
-        t.dispatch(lambda s, e: print("Dispatched Pricing: [" + str(s) + "->" + str(e) + " <" + str(len(thread_pool)) +
+        t.dispatch(endFunc=lambda s, e: print("Dispatched Pricing: [" + str(s) + "->" + str(e) + " <" + str(len(thread_pool)) +
                                       ">]"))
 
 
