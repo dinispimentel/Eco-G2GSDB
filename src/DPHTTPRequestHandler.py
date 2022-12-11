@@ -1,42 +1,43 @@
 import json
 from http.server import BaseHTTPRequestHandler
 
-from G2G.G2GScraper import G2GScraper
+from src.G2G.G2GScraper import G2GScraper
 from src.ProxyOrchestrator import ProxyOrchestrator
 
 
 class DPHTTPRequestHandler(BaseHTTPRequestHandler):
-    def __init__(self, dmdata, PO, *args, **kwargs):
+    def __init__(self, g2gdata, PO, *args, **kwargs):
         from .routing import Router
-        # self.dmarket_data_update_timestamp = getPersistantData().get('dmarket_data_update_timestamp')
-        # self.current_status = getPersistantData().get('c') or "inited"
-        from src.G2G.G2GOfferBook import OfferBook
+
         from src.G2G.G2GData import G2GData
-        self.G2GData: G2GData = dmdata
-        # self.PO = getPersistantData().get('PO') or ProxyOrchestrator.build_from_raw(PROXIES,
-        #                                                                             method='socks5')
+        self.G2GData: G2GData = g2gdata
+
         self.PO: ProxyOrchestrator = PO
         self.router = Router(self)
-        # self.setPersistantData = setPersistantData
-        # self.getPersistantData = getPersistantData
+
         super().__init__(*args, **kwargs)
 
     def do_GET(self):
-        if self.path == "/status":
-            self.send_response(200)
-        if self.path == '/getUpdatedOfferBook':
-            G2GScraper.updateAccountCache()
-            ob = G2GScraper.getOffers(False)
-            self.write_response(ob.toJSON())
+        self.router.GET()
 
     def do_POST(self):
-        if self.path == "/scrapAccount":
-            body = self.rfile.read()
-            pbody = json.loads(body)
-            if not pbody["account"]:
-                self.write_response(MSGS["null_json"])
-                return
+        self.router.POST()
+
     def write_response(self, content):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(str(content).encode("utf-8"))
+
+ERRORS = {
+    "null_json": {"success": False, "msg": "The JSON received did not contain the required params."},
+    "internal_error": {"success": False, "msg": "Internal error occurred"},
+    "data_locked": {"success": False, "msg": "Data is locked."},
+    "offer_book_missing_flag": {"success": False,
+                                "msg": "Internal OfferBook can't proceed to this action (Missing Flags)."},
+    "offer_book_currency_mismatch": {"success": False, "msg": "One of the currencies is not equal to the other.\n"
+                                                              "Please Convert:"},
+    "bad_params": {"success": False, "msg": "Bad params."}
+}
+SUCCESSES = {
+    "action_succeded": {"success": True, "msg": "Action performed successfuly."}
+}
