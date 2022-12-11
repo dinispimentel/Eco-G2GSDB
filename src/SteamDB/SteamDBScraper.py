@@ -3,6 +3,7 @@ import json
 import time
 from difflib import SequenceMatcher
 from threading import Thread
+from typing import Callable
 
 from src.G2G.G2GOfferBook import OfferBook, Exceptions
 from src.RedisCache import RedisCache
@@ -15,7 +16,7 @@ from ecolib.logger import lg as logging
 from ecolib.threader import Threader
 from ecolib.utils import Utils
 
-countries = ["ar", "us", "pt"]
+countries = Config.SteamDB.AppPricing.COUNTRIES
 
 
 BASE = Config.ExRates.BASE
@@ -97,7 +98,7 @@ class SteamDBScraper:
                                             cCurrency=base or BASE
                                         )
                                         if str(aID) in list(prices.keys()):
-                                            PList = prices[str(aID)]
+                                            PList = prices.get(str(aID))
                                             PList.append(newPrice)
                                             prices.update(
                                                 {
@@ -123,7 +124,7 @@ class SteamDBScraper:
 
         exrates_base = Dispatcher.ExRates_getBase()
         if (base or BASE) != exrates_base:
-            Dispatcher.ExRates_forceUpdate(base=(base or BASE))
+            Dispatcher.ExRates_forceUpdate(base=(base or BASE), currencies=Config.SteamDB.AppPricing.EXRATES_COUNTRIES_CURRENCIES)
         # exrates = SteamDBScraper._updateInternalPriceConversion(symbols, base=base)
         exrates = Dispatcher.ExRates_getRates()
 
@@ -133,7 +134,7 @@ class SteamDBScraper:
                     if p.currency == (base or BASE):
                         p.cValue = p.value
                     else:
-                        p.cValue = float(p.value) / float(exrates[(base or BASE) + str(p.currency)])
+                        p.cValue = round(float(p.value) / float(exrates[(base or BASE) + str(p.currency)]), 3)
                 except KeyError:
                     logging.error("Não foi possível converter: " + str(p.currency) + "->" + str(p.cCurrency))
 
