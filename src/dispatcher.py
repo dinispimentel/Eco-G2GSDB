@@ -1,8 +1,10 @@
+import os.path
+
 import requests
 import json
 from src.config import Config
 
-with open("../secret.json", "r") as file:
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "secret.json"), "r") as file:
     ENV = json.loads(file.read())
 
 G2GServiceID = "lgc_service_5"
