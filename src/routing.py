@@ -27,7 +27,8 @@ class Router:
         "BRAND": "/brand-it",
         "PRICE": "/g2g-price-it",
         "STEAM_APP_ID": "/steam-app-id-it",
-        "STEAM_PRICE": "/steam-price-it"
+        "STEAM_PRICE": "/steam-price-it",
+        "BLACKLIST_ADD": "/blacklist-add"
     }
 
     PatchRoutes = {
@@ -92,6 +93,9 @@ class Router:
         elif path == self.PostRoutes["STEAM_PRICE"]:
             from .Controllers.steampricing import SteamPricing
             SteamPricing.POST(self, jbody=jbody)
+        elif path == self.PostRoutes["BLACKLIST_ADD"]:
+            from .Controllers.blacklist import BlackList
+            BlackList.POST(self, jbody=jbody)
 
     # def PATCH(self):
     #     path = self.RH.path
