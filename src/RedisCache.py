@@ -6,9 +6,9 @@ import redis
 
 from src.config import Config
 
-r = redis.Redis(host=Config.Redis.HOST, port=Config.Redis.PORT, db=13)  # para os appIDs dos títulos
+r = redis.Redis(host=Config.Redis.HOST, port=Config.Redis.PORT, db=13)  # para os appIDs dos títulos 13
 
-r2 = redis.Redis(host=Config.Redis.HOST, port=Config.Redis.PORT, db=14)  # as BlackLists
+r2 = redis.Redis(host=Config.Redis.HOST, port=Config.Redis.PORT, db=14)  # as BlackLists 14
 
 class RedisCache:
 
