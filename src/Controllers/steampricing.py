@@ -3,12 +3,15 @@ from __future__ import annotations
 from threading import Thread
 from typing import Tuple, List, Type, Dict
 
+import requests
+
 from . import BasicController
 from ..G2G.G2GOfferBook import OfferBook
 
 from ..G2G.G2GScraper import G2GScraper
 from ..SteamDB.SteamDBScraper import SteamDBScraper
 from ..config import Config
+from ..dispatcher import Dispatcher
 
 
 class SteamPricing(BasicController.BasicController):
@@ -52,6 +55,12 @@ class SteamPricing(BasicController.BasicController):
         allf, fm = ob.containsFlags([ob.Flags.STEAM_APPIDED, ob.Flags.STEAM_APPID_SANITIZED])
         if not allf:
             R.OfferBookMissingFlags(fm)
+            return
+
+        try:
+            Dispatcher.ExRates_getBase()
+        except requests.exceptions.ConnectionError:
+            R.InternalError("Couldn't connect to ExRates Server.")
             return
 
         R.actionSucceeded("Steam Pricing started...")
