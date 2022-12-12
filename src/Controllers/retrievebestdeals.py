@@ -97,6 +97,8 @@ class RetrieveBestDeals(BasicController):
                 offset = int(params.get('offset')) or 0
                 ob.sort(sortFunc, sortDir)
                 sob = ob.getSubsetOfferBook(offer_limit=offer_count, offset=offset)
+                sob.sort(sortFunc, sortDir)
+                ob.writeToFile("/home/dp/Desktop/Eco-G2GSDB/src/cache/myofferbook.json") # TEST
                 R.RH.G2GData.unlock()
                 R.retrieveOfferBook(sob)
             except (Exception, BaseException):
