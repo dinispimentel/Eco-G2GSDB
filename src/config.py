@@ -23,7 +23,7 @@ class Config:
 
     class ENV:
         URL_PPREFIX = "http://"
-        LOCAL_IP = "192.168.0.120"
+        LOCAL_IP = "192.168.0.140"
 
     class G2G:
         SERVICE_ID = "lgc_service_5"
@@ -106,7 +106,7 @@ class Config:
         ALLOWED_CURRENCIES = ["EUR", "USD", "ARS", "TRY"]
 
     class Redis:
-        HOST = 'localhost'
+        HOST = '192.168.0.120'
         PORT = 6379
 
         class DBS:

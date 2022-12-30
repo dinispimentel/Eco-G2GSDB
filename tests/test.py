@@ -24,30 +24,29 @@ from src.config import Config
 # print(G2GScraper._getBrandsOffers(["lgc_game_29302", "lgc_game_23618"]))
 
 TESTING = False
-BASE = Config.ExRates.BASE
-G2GScraper.updateAccountCache()
-ob = G2GScraper.getOffers(testing=TESTING)
 
-ob.removeCountBelowX(30)
-G2GScraper.retrieveLowestPrices(ob, 5)
-ob.removeOffersWithoutG2GPrice()
+ob = OfferBook.loadFromFile("/home/dinis/Desktop/EcoScraper/G2GSDB/src/cache/myofferbook.json")
+
+# ob.removeCountBelowX(30)
+# G2GScraper.retrieveLowestPrices(ob, 5)
+# ob.removeOffersWithoutG2GPrice()
 # ob.writeToFile(Config.OfferBooking.FILES.getPriced(testing=TESTING))
 # ob = OfferBook.loadFromFile(Config.OfferBooking.FILES.getPriced(testing=TESTING))
-SteamDBScraper.retrieveAppIDs(ob)
-ob.removeOffersWithoutAppID()
+# SteamDBScraper.retrieveAppIDs(ob)
+# ob.removeOffersWithoutAppID()
 # ob.writeToFile(Config.OfferBooking.FILES.getAppIDed(testing=TESTING))
-SteamDBScraper.retrieveSteamPrices(ob, BASE)
+# SteamDBScraper.retrieveSteamPrices(ob, BASE)
 # ob = OfferBook.loadFromFile(Config.OfferBooking.FILES.getSteamPriced(testing=TESTING))
 # SteamDBScraper.setOfferBookSteamPrices(ob, BASE)
 
 # ob = OfferBook.loadFromFile(Config.OfferBooking.FILES.getSteamPriced(testing=TESTING))
-ob.print()
+# ob.print()
 # ob.removeCountBelowX(40)
 # ob = OfferBook.loadFromFile(Config.OfferBooking.FILES.getSteamPriced(testing=TESTING))
 # ob.removeOffersWithoutAnySteamPrice()
 # ob.removeCountBelowX(50)
-ob.sort(SORTING.OPTIONS.FUNCS.priceGapPercentage, SORTING.DIRECTION.ASCENDANT)
-ob.printXOffers(25)
+ob.sort(SORTING.OPTIONS.FUNCS.priceGapOrder, SORTING.DIRECTION.DESCENDANT)
+ob.printXOffers(50)
 # ob.printXOffers(50)
 
 

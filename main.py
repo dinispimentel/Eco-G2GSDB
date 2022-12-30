@@ -28,7 +28,7 @@ if __name__ == '__main__':
     PO = ProxyOrchestrator.build_from_raw(PROXIES, method='socks5')
     RH = partial(DPHTTPRequestHandler, G2GData, PO)
     print("Binding..")
-    webServer = ThreadedHTTPServer(("192.168.0.120", 8081), RH)
+    webServer = ThreadedHTTPServer(("192.168.0.140", 8081), RH)
 
     try:
         webServer_Thread = Thread(target=webServer.serve_forever)

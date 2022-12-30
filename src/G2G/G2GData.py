@@ -8,8 +8,8 @@ class G2GData:
 
     def __init__(self, offerbook: OfferBook = None, lastUpdate=None, status=None, progress=None):
         self.locked: bool = False
-        self.offerbook: OfferBook = offerbook or OfferBook.loadFromFile("/home/dp/Desktop/Eco-G2GSDB/src/cache/myofferbook.json")
-        # OfferBook.loadFromFile("/home/dp/Desktop/Eco-G2GSDB/src/cache/myofferbook.json")
+        self.offerbook: OfferBook = offerbook or OfferBook.loadFromFile("/home/dinis/Desktop/EcoScraper/G2GSDB/src/cache/myofferbook.json")
+        # OfferBook.loadFromFile("/home/dp/Desktop/EcoScraper/G2GSDB/src/cache/myofferbook.json")
         #
 
 
